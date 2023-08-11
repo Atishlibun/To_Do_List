@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TO-DO List By Atish</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <style>
+        body {
+            margin: 0;
+        }
+
+        .header1 {
+            height: 60px !important;
+            border-bottom: 1px solid lightblue;
+            padding: 10px;
+            padding-right: 20px;
+            text-align: right;
+            font-size: 24px;
+            opacity: 0.8;
+            color: white;
+
+            background-color: rgb(187, 46, 46);
+            box-shadow: 0 5px 20px rgb(195, 226, 236);
+
+        }
+
+        #form {
+            margin: 30px 50px;
+        }
+
+        input[type=text] {
+            margin-left: 10px;
+            width: 500px;
+            height: 45px;
+            font-size: 16px;
+            box-sizing: border-box;
+            border: 1px solid purple;
+            outline: none;
+            padding-left: 10px;
+
+        }
+
+        .submitbtn {
+            font-size: 16px;
+            background-color: rgb(51, 192, 51);
+            border-radius: 4px;
+            color: white;
+            padding: 14px 30px;
+            text-align: center;
+            cursor: pointer;
+            margin-top: 5px;
+            margin-left: 30px;
+            border: none;
+        }
+
+        .submitbtn:hover {
+            background-color: rgb(30, 176, 30);
+
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container1">
+        <div class="header1">
+
+            TO-DO-LIST
+
+        </div>
+        <div id="form">
+            <input type="text" placeholder="Enter your Text..." id="input">
+            <button class="submitbtn" id="btn">Submit</button>
+        </div>
+        <div id="display">
+
+        </div>
+
+    </div>
+
+
+    <script>
+        let input = document.getElementById("input")
+        let btn = document.getElementById("btn")
+        let btnDelete = document.getElementById("btnDelete")
+        let edit_id;
+        let storageArr=JSON.parse(localStorage.getItem("todo"))
+        // console.log(storageArr);
+        let globalArr = (storageArr)?storageArr:[]
+        console.log(globalArr);
+        print();
+        btn.addEventListener('click', (e) => {
+            if (!input.value) {
+                alert("Empty value cannot enter")
+            }
+            else {
+                if (!edit_id) {
+                    let obj = {
+                        id: new Date().getMilliseconds(),
+                        task: input.value
+                    }
+                    globalArr.push(obj)
+                }
+                else {
+                    globalArr.forEach((e, i) => {
+                        if (edit_id == e.id) {
+                            globalArr[i].task = input.value
+                        }
+                    })
+                    edit_id=undefined;
+                    btn.style.background="green"
+                    btn.innerText="Submit"
+                }
+                localStorage.setItem("todo",JSON.stringify(globalArr))
+                print()
+                input.value = ""
+            }
+
+        })
+
+
+        //printing function
+
+        function print() {
+            str = ""
+            globalArr.map((e) => {
+                str += `<div class="card" style="width: 18rem; margin-left: 100px;">
+                            <div class="card-body flex">
+                                 <p class="card-text">${e.task}</p>
+                                <div>
+                                    <button type="button" class="btn btn-primary" onclick=edit(${e.id})  >Edit</button>
+                                     <button type="button" class="btn btn-danger" onClick="del(${e.id})">Delete</button>
+                                 </div>
+                            </div>
+                        </div>`
+            })
+            document.getElementById("display").innerHTML = str
+
+        }
+
+        //DELETE BUTTON
+        function del(id) {
+            globalArr = globalArr.filter(e => e.id != id)
+            localStorage.setItem("todo",JSON.stringify(globalArr))
+            print()
+        }
+        //Edit btn
+        function edit(id) {
+            edit_id = id
+            let x = globalArr.find(e => e.id == id)
+            input.value = x.task
+            btn.style.background="red"
+            btn.innerText="UPDATE"
+        }
+
+
+
+    </script>
+
+</body>
+
+</html>
